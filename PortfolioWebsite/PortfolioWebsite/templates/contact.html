@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="max-w-2xl mx-auto px-4 py-24 animate-on-scroll">
+  <h2 class="text-3xl font-bold mb-6">Contact Me</h2>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="mb-4 p-3 rounded bg-green-200 text-green-800">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+  <form method="POST" class="flex flex-col gap-4">
+      <input type="text" name="name" placeholder="Name" required class="p-3 rounded border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400">
+      <input type="email" name="email" placeholder="Email" required class="p-3 rounded border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400">
+      <textarea name="message" placeholder="Message" rows="5" required class="p-3 rounded border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
+      <button type="submit" class="bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition-colors">Send Message</button>
+  </form>
+</section>
+
+{% endblock %}
+
+
+

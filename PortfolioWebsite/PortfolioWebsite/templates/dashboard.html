@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="max-w-5xl mx-auto px-4 py-12 animate-on-scroll">
+    <h2 class="text-3xl font-bold mb-8 text-center">Analytics Dashboard</h2>
+
+    <!-- Page Views Chart -->
+    <div class="mb-12">
+        <h3 class="text-xl font-semibold mb-4">Page Views</h3>
+        <canvas id="pageViewsChart" class="bg-white dark:bg-gray-800 p-4 rounded shadow-md"></canvas>
+    </div>
+
+    <!-- Form Submissions Chart -->
+    <div class="mb-12">
+        <h3 class="text-xl font-semibold mb-4">Form Submissions</h3>
+        <canvas id="formSubmissionsChart" class="bg-white dark:bg-gray-800 p-4 rounded shadow-md"></canvas>
+    </div>
+
+    <!-- Submission Details -->
+    <div>
+        <h3 class="text-xl font-semibold mb-2">Form Submissions Details</h3>
+        <ul class="space-y-2">
+            {% for sub in submissions %}
+            <li class="bg-gray-100 dark:bg-gray-800 p-4 rounded">
+                <p><strong>Name:</strong> {{ sub.name }}</p>
+                <p><strong>Email:</strong> {{ sub.email }}</p>
+                <p><strong>Message:</strong> {{ sub.message }}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Submitted: {{ sub.timestamp.strftime("%Y-%m-%d %H:%M:%S") }}</p>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    // Page Views Chart
+    const ctxViews = document.getElementById('pageViewsChart').getContext('2d');
+    const pageViewsChart = new Chart(ctxViews, {
+        type: 'bar',
+        data: {
+            labels: {{ analytics.page_views.keys()|list }},
+            datasets: [{
+                label: 'Page Views',
+                data: {{ analytics.page_views.values()|list }},
+                backgroundColor: 'rgba(59, 130, 246, 0.7)', // Tailwind blue-500
+                borderColor: 'rgba(59, 130, 246, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                tooltip: { mode: 'index', intersect: false }
+            },
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+
+    // Form Submissions Chart
+    const ctxForms = document.getElementById('formSubmissionsChart').getContext('2d');
+    const formSubmissionsChart = new Chart(ctxForms, {
+        type: 'line',
+        data: {
+            labels: {{ submissions|map(attribute='timestamp')|map('strftime', '%H:%M:%S')|list }},
+            datasets: [{
+                label: 'Submissions',
+                data: {{ submissions|map(attribute='timestamp')|map('string')|list|length }},
+                fill: true,
+                backgroundColor: 'rgba(34,197,94,0.2)', // Tailwind green-500
+                borderColor: 'rgba(34,197,94,1)',
+                tension: 0.3
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                tooltip: { mode: 'index', intersect: false }
+            },
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}
